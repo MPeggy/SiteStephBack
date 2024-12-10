@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PrestationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,17 @@ class Prestation
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updateAt = null;
+
+    /**
+     * @var Collection<int, Picture>
+     */
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'prestation', orphanRemoval: true)]
+    private Collection $pictures;
+
+    public function __construct()
+    {
+        $this->pictures = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -150,6 +163,36 @@ class Prestation
     public function setUpdateAt(?\DateTimeImmutable $updateAt): static
     {
         $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Picture>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Picture $picture): static
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures->add($picture);
+            $picture->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): static
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getPrestation() === $this) {
+                $picture->setPrestation(null);
+            }
+        }
 
         return $this;
     }
