@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241210104326 extends AbstractMigration
+final class Version20241210184517 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,9 @@ final class Version20241210104326 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE booking (id INT AUTO_INCREMENT NOT NULL, name_user VARCHAR(128) NOT NULL, order_date DATE NOT NULL, order_hour DATETIME NOT NULL, am_opening_time JSON DEFAULT NULL, pm_opening_time JSON DEFAULT NULL, roles JSON NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', update_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE presta_category (id INT AUTO_INCREMENT NOT NULL, prestation_id INT DEFAULT NULL, INDEX IDX_24DD92DA9E45C554 (prestation_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE presta_category ADD CONSTRAINT FK_24DD92DA9E45C554 FOREIGN KEY (prestation_id) REFERENCES prestation (id)');
+        $this->addSql('ALTER TABLE booking CHANGE update_at update_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE picture CHANGE update_at update_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE prestation CHANGE update_at update_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
@@ -28,7 +30,9 @@ final class Version20241210104326 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE booking');
+        $this->addSql('ALTER TABLE presta_category DROP FOREIGN KEY FK_24DD92DA9E45C554');
+        $this->addSql('DROP TABLE presta_category');
+        $this->addSql('ALTER TABLE booking CHANGE update_at update_at DATETIME DEFAULT \'NULL\' COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE picture CHANGE update_at update_at DATETIME DEFAULT \'NULL\' COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE prestation CHANGE update_at update_at DATETIME DEFAULT \'NULL\' COMMENT \'(DC2Type:datetime_immutable)\'');
     }

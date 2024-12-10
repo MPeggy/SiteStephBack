@@ -14,7 +14,7 @@ class Picture
     private ?int $id = null;
 
     #[ORM\Column(length: 64)]
-    private ?string $title = null;
+    private ?string $titre = null;
 
     #[ORM\Column(length: 64)]
     private ?string $slug = null;
@@ -26,22 +26,21 @@ class Picture
     private ?\DateTimeImmutable $updateAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?prestation $prestation = null;
+    private ?Prestation $prestation = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitre(): ?string
     {
-        return $this->title;
+        return $this->titre;
     }
 
-    public function setTitle(string $title): static
+    public function setTitre(string $titre): static
     {
-        $this->title = $title;
+        $this->titre = $titre;
 
         return $this;
     }
@@ -82,12 +81,12 @@ class Picture
         return $this;
     }
 
-    public function getPrestation(): ?prestation
+    public function getPrestation(): ?Prestation
     {
         return $this->prestation;
     }
 
-    public function setPrestation(?prestation $prestation): static
+    public function setPrestation(?Prestation $prestation): static
     {
         $this->prestation = $prestation;
 

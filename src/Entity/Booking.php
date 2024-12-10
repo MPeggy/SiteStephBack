@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BookingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,8 +16,8 @@ class Booking
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 128)]
-    private ?string $nameUser = null;
+    #[ORM\Column(length: 64)]
+    private ?string $username = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $orderDate = null;
@@ -23,14 +25,8 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $orderHour = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $amOpeningTime = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?array $pmOpeningTime = null;
-
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -38,19 +34,30 @@ class Booking
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updateAt = null;
 
+    /**
+     * @var Collection<int, prestation>
+     */
+    #[ORM\ManyToMany(targetEntity: prestation::class, inversedBy: 'bookings')]
+    private Collection $prestation;
+
+    public function __construct()
+    {
+        $this->prestation = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNameUser(): ?string
+    public function getUsername(): ?string
     {
-        return $this->nameUser;
+        return $this->username;
     }
 
-    public function setNameUser(string $nameUser): static
+    public function setUsername(string $username): static
     {
-        $this->nameUser = $nameUser;
+        $this->username = $username;
 
         return $this;
     }
@@ -79,38 +86,14 @@ class Booking
         return $this;
     }
 
-    public function getAmOpeningTime(): ?array
+    public function getDescription(): ?string
     {
-        return $this->amOpeningTime;
+        return $this->description;
     }
 
-    public function setAmOpeningTime(?array $amOpeningTime): static
+    public function setDescription(?string $description): static
     {
-        $this->amOpeningTime = $amOpeningTime;
-
-        return $this;
-    }
-
-    public function getPmOpeningTime(): ?array
-    {
-        return $this->pmOpeningTime;
-    }
-
-    public function setPmOpeningTime(?array $pmOpeningTime): static
-    {
-        $this->pmOpeningTime = $pmOpeningTime;
-
-        return $this;
-    }
-
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
+        $this->description = $description;
 
         return $this;
     }
@@ -135,6 +118,30 @@ class Booking
     public function setUpdateAt(?\DateTimeImmutable $updateAt): static
     {
         $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, prestation>
+     */
+    public function getPrestation(): Collection
+    {
+        return $this->prestation;
+    }
+
+    public function addPrestation(prestation $prestation): static
+    {
+        if (!$this->prestation->contains($prestation)) {
+            $this->prestation->add($prestation);
+        }
+
+        return $this;
+    }
+
+    public function removePrestation(prestation $prestation): static
+    {
+        $this->prestation->removeElement($prestation);
 
         return $this;
     }

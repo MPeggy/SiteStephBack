@@ -16,25 +16,22 @@ class Prestation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 64)]
+    #[ORM\Column(length: 32)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 64)]
+    private ?string $openingDate = null;
+
     #[ORM\Column(type: Types::ARRAY)]
     private array $amOpenIngTime = [];
 
     #[ORM\Column(type: Types::ARRAY)]
-    private array $pmOpenIngTime = [];
+    private array $pmOpeningTime = [];
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $orderDate = null;
-
-    #[ORM\Column(length: 32)]
-    private ?string $title = null;
-
-    #[ORM\Column]
+    #[ORM\Column(type: Types::SMALLINT)]
     private ?int $price = null;
 
     #[ORM\Column]
@@ -46,12 +43,26 @@ class Prestation
     /**
      * @var Collection<int, Picture>
      */
-    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'prestation', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'prestation')]
     private Collection $pictures;
+
+    /**
+     * @var Collection<int, Booking>
+     */
+    #[ORM\ManyToMany(targetEntity: Booking::class, mappedBy: 'prestation')]
+    private Collection $bookings;
+
+    /**
+     * @var Collection<int, PrestaCategory>
+     */
+    #[ORM\OneToMany(targetEntity: PrestaCategory::class, mappedBy: 'prestation')]
+    private Collection $prestaCategories;
 
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
+        $this->prestaCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,6 +94,18 @@ class Prestation
         return $this;
     }
 
+    public function getOpeningDate(): ?string
+    {
+        return $this->openingDate;
+    }
+
+    public function setOpeningDate(string $openingDate): static
+    {
+        $this->openingDate = $openingDate;
+
+        return $this;
+    }
+
     public function getAmOpenIngTime(): array
     {
         return $this->amOpenIngTime;
@@ -95,38 +118,14 @@ class Prestation
         return $this;
     }
 
-    public function getPmOpenIngTime(): array
+    public function getPmOpeningTime(): array
     {
-        return $this->pmOpenIngTime;
+        return $this->pmOpeningTime;
     }
 
-    public function setPmOpenIngTime(array $pmOpenIngTime): static
+    public function setPmOpeningTime(array $pmOpeningTime): static
     {
-        $this->pmOpenIngTime = $pmOpenIngTime;
-
-        return $this;
-    }
-
-    public function getOrderDate(): ?\DateTimeInterface
-    {
-        return $this->orderDate;
-    }
-
-    public function setOrderDate(\DateTimeInterface $orderDate): static
-    {
-        $this->orderDate = $orderDate;
-
-        return $this;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
+        $this->pmOpeningTime = $pmOpeningTime;
 
         return $this;
     }
@@ -187,13 +186,64 @@ class Prestation
 
     public function removePicture(Picture $picture): static
     {
-        if ($this->pictures->removeElement($picture)) {
-            // set the owning side to null (unless already changed)
-            if ($picture->getPrestation() === $this) {
-                $picture->setPrestation(null);
-            }
+    if ($this->pictures->removeElement($picture) && $picture->getPrestation() === $this) {
+        $picture->setPrestation(null);
+    }
+
+    return $this;
+}
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->addPrestation($this);
         }
 
         return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            $booking->removePrestation($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestaCategory>
+     */
+    public function getPrestaCategories(): Collection
+    {
+        return $this->prestaCategories;
+    }
+
+    public function addPrestaCategory(PrestaCategory $prestaCategory): static
+    {
+        if (!$this->prestaCategories->contains($prestaCategory)) {
+            $this->prestaCategories->add($prestaCategory);
+            $prestaCategory->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrestaCategory(PrestaCategory $prestaCategory): static
+    {
+        if ($this->prestaCategories->removeElement($prestaCategory) && $prestaCategory->getPrestation() === $this) {
+        $prestaCategory->setPrestation(null);
+    }
+
+    return $this;
     }
 }
