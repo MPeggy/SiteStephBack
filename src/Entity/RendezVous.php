@@ -27,7 +27,7 @@ class RendezVous
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'RendezVous')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Activity $activity = null;
 
     public function getId(): ?int

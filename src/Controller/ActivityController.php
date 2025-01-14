@@ -17,26 +17,27 @@ class ActivityController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'new', methods: 'POST')]
+    #[Route(methods: 'POST')]
     public function new(): Response
     {
         $activity = new Activity();
         $activity->setName('Coaching');
         $activity->setDescription('Libérez votre potentiel.');
+        $activity->setTarif('80');
+        $activity->setDaysopen(["Monday", "Tuesday"]);
+        $activity->setDescription('Libérez votre potentiel.');
         $activity->setCreatedAt(new DateTimeImmutable());
-
+        
         $this->manager->persist($activity);
         $this->manager->flush();
 
-
         return $this->json(
-            ['message' => "Coachong resource created with {$activity->getId()} id"],
+            ['message' => "Coaching resource created with {$activity->getId()}"],
             Response::HTTP_CREATED,
         );
-        
     }
 
-    #[Route('/{id}', name: 'show', methods: 'GET')]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(int $id): Response
     {
         // ... Affiche et sauvegarde en base de données
@@ -51,7 +52,7 @@ class ActivityController extends AbstractController
         );
     }
     
-    #[Route('/{id}', name: 'edit', methods: 'PUT')]
+    #[Route('/{id}', name: 'edit', methods: ['PUT'])]
     public function edit(int $id): Response
     {
         // … Edite et sauvegarde en base de données
@@ -61,13 +62,13 @@ class ActivityController extends AbstractController
             throw $this->createNotFoundException("No Activity found for {$id} id");
         }
 
-        $activity->setName('Activity name updated');
+        $activity->setName('EquiCoaching updated');
         $this->manager->flush();
 
         return $this->redirectToRoute('app_api_activity_show', ['id' => $activity->getId()]);
     }
 
-    #[Route('/{id}', name: 'delete', methods: 'DELETE')]
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): Response
     {
         // ... Supprime le activity de la base de données

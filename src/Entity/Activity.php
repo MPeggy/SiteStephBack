@@ -47,7 +47,7 @@ class Activity
     private Collection $pictures;
 
     #[ORM\ManyToOne(inversedBy: 'Activity')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?CategoryActivity $categoryActivity = null;
 
     /**
