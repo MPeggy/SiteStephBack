@@ -24,7 +24,7 @@ class RendezvousController extends AbstractController
     {
     }
 
-    #[Route(methods: 'POST')]
+    #[Route(methods: ['POST'])]
     public function new(Request $request): JsonResponse
     {
         $rendezvous = $this->serializer->deserialize($request->getContent(), RendezVous::class, 'json');

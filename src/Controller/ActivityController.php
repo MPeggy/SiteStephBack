@@ -24,7 +24,7 @@ class ActivityController extends AbstractController
     {
     }
 
-    #[Route(methods: 'POST')]
+    #[Route(methods: ['POST'])]
     public function new(Request $request): JsonResponse
     {
         $activity = $this->serializer->deserialize($request->getContent(), Activity::class, 'json');

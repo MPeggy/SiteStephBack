@@ -40,6 +40,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $apiToken;
 
+    #[ORM\Column(length: 64)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(length: 64)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 16)]
+    private ?string $telephone = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Commentaires = null;
+
     /** @throws \Exception */
     public function __construct()
     {
@@ -151,6 +163,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(string $apiToken): static
     {
         $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): static
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(string $telephone): static
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getCommentaires(): ?string
+    {
+        return $this->Commentaires;
+    }
+
+    public function setCommentaires(?string $Commentaires): static
+    {
+        $this->Commentaires = $Commentaires;
 
         return $this;
     }
